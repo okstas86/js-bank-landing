@@ -161,3 +161,99 @@ const imgObserver = new IntersectionObserver(loadImg, {
 });
 
 imgTargets.forEach(img => imgObserver.observe(img));
+
+//Slider
+const slider = () => {
+  const slides = document.querySelectorAll('.slide');
+
+  const slider = document.querySelector('.slider');
+  const btnLeft = document.querySelector('.slider__btn--left');
+  const btnRight = document.querySelector('.slider__btn--right');
+  let curSlide = 0;
+  const maxSlide = slides.length;
+  const dotContainer = document.querySelector('.dots');
+
+  const goToSlide = slide => {
+    slides.forEach((sl, i) => {
+      sl.style.transform = `translateX(${100 * (i - slide)}%)`;
+    });
+  };
+  goToSlide(0);
+
+  const nextSlide = () => {
+    if (curSlide === maxSlide - 1) {
+      curSlide = 0;
+    } else {
+      curSlide++;
+    }
+    goToSlide(curSlide);
+    activateDot(curSlide);
+  };
+  const prevSlide = () => {
+    if (curSlide === 0) {
+      curSlide = maxSlide - 1;
+    } else {
+      curSlide--;
+    }
+    goToSlide(curSlide);
+    activateDot(curSlide);
+  };
+
+  btnRight.addEventListener('click', nextSlide);
+  btnLeft.addEventListener('click', prevSlide);
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowLeft') prevSlide();
+    e.key === 'ArrowRight' && nextSlide();
+  });
+
+  const createDots = () => {
+    slides.forEach((_, i) => {
+      dotContainer.insertAdjacentHTML(
+        'beforeend',
+        `<button class="dots__dot" data-slide='${i}'></button>`
+      );
+    });
+  };
+  createDots();
+
+  const activateDot = slide => {
+    document
+      .querySelectorAll('.dots__dot')
+      .forEach(dot => dot.classList.remove('dots__dot--active'));
+    document
+      .querySelector(`.dots__dot[data-slide="${slide}"]`)
+      .classList.add('dots__dot--active');
+  };
+  activateDot(0);
+
+  dotContainer.addEventListener('click', e => {
+    if (e.target.classList.contains('dots__dot')) {
+      const { slide } = e.target.dataset;
+
+      goToSlide(slide);
+      activateDot(slide);
+    }
+  });
+};
+slider();
+
+/////////////////////////////////
+//Create cookie message
+const allSection = document.querySelectorAll('.section');
+
+const message = document.createElement('div');
+message.classList.add('cookie-message');
+
+message.innerHTML =
+  'We use cookied to impruved functionality and analitics.<button class="btn btn--close-cookie">Got it!</button > ';
+header.append(message);
+
+document.querySelector('.btn--close-cookie').addEventListener('click', () => {
+  message.parentElement.removeChild(message);
+});
+
+message.style.backgroundColor = '#37383d';
+message.style.width = '120%';
+
+message.style.height = parseFloat(getComputedStyle(message).height) + 30 + 'px';
